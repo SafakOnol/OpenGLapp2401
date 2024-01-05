@@ -60,11 +60,6 @@ int main(void)
             2, 3, 0
         };
 
-        // order of things matter here... vao->buffer->index
-        unsigned int vao;
-        GLCall(glGenVertexArrays(1, &vao));
-        GLCall(glBindVertexArray(vao));
-
         VertexArray va;
         VertexBuffer vb(positions, 4 * 2 * sizeof(float));
 
@@ -83,25 +78,20 @@ int main(void)
         vb.Unbind();
         ib.Unbind();
 
-        GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
-        GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+        Renderer renderer;
 
         float r = 0.0f;
         float increment = 0.05f;
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window))
         {
-            /* Render here */
-            GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
-            // BIND
+            renderer.Clear();
+
             shader.Bind();
             shader.SetUniform4f("u_Color", r, 0.8f, 0.8f, 1.0f);
-            
-            va.Bind();
-            ib.Bind();
 
-            GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr)); // UNSIGNED_INT IS A MUST!
+            renderer.Draw(va, ib, shader);
 
             if (r > 1.0f)
                 increment = -0.05f;
@@ -110,10 +100,10 @@ int main(void)
             r += increment;
 
             /* Swap front and back buffers */
-            GLCall(glfwSwapBuffers(window));
+            glfwSwapBuffers(window);
 
             /* Poll for and process events */
-            GLCall(glfwPollEvents());
+            glfwPollEvents();
         }
 
     } //
