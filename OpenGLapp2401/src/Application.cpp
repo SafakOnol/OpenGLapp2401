@@ -139,7 +139,13 @@ int main(void)
         GLCall(glGenVertexArrays(1, &vao));
         GLCall(glBindVertexArray(vao));
 
+        VertexArray va;
         VertexBuffer vb(positions, 4 * 2 * sizeof(float));
+        va.AddBuffer(vb);
+
+        BufferLayout layout;
+        layout.Push<float>(3);
+        va.AddLayout(layout);        
 
         GLCall(glEnableVertexAttribArray(0));
         GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0)); // this line links buffer to vao
